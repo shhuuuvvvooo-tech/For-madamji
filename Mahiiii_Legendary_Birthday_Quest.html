@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mahiiii — The Birthday Quest ✨</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap');
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"DM Sans",sans-serif;color:#fff;background:#070713}
+body{overflow-x:hidden}
+#app{min-height:100vh;position:relative;overflow:hidden;background:
+radial-gradient(circle at 20% 10%,#7d3cff44,transparent 35%),
+radial-gradient(circle at 90% 80%,#ff4f9a33,transparent 35%),#070713}
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.screen{min-height:100vh;display:none;place-items:center;padding:28px;position:relative;z-index:2}
+.screen.active{display:grid}
+.panel{width:min(920px,100%);text-align:center}
+.kicker{text-transform:uppercase;letter-spacing:4px;font-size:12px;color:#d6c6ff}
+h1,h2{font-family:"Playfair Display",serif;margin:0}
+.hero h1{font-size:clamp(56px,14vw,130px);line-height:.9;background:linear-gradient(120deg,#fff,#ffc9e4,#cdb8ff);-webkit-background-clip:text;color:transparent;text-shadow:0 0 50px #ff78bd33}
+.hero p{max-width:650px;margin:24px auto;color:#cfcde0;line-height:1.8}
+button{border:0;color:#fff;background:linear-gradient(100deg,#ff4f9a,#7c5cff);padding:15px 23px;border-radius:999px;font-weight:700;cursor:pointer;box-shadow:0 12px 35px #a653ff33;transition:.2s}
+button:hover{transform:translateY(-2px) scale(1.02)}
+button.secondary{background:#ffffff12;border:1px solid #ffffff22}
+.glass{background:#ffffff0b;border:1px solid #ffffff16;border-radius:30px;padding:34px;backdrop-filter:blur(16px);box-shadow:0 25px 80px #0005}
+.progress{position:fixed;top:16px;left:50%;transform:translateX(-50%);width:min(430px,80vw);height:4px;background:#ffffff16;border-radius:99px;z-index:10}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff55a5,#8d72ff);border-radius:99px;transition:.5s}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:25px 0}
+.choice{min-height:130px;border:1px solid #ffffff15;border-radius:22px;background:#ffffff08;padding:18px;display:grid;place-items:center;cursor:pointer;transition:.25s}
+.choice:hover{background:#ffffff14;transform:translateY(-5px)}
+.choice span{font-size:35px}.choice small{color:#aaa6bd}
+.note{display:none}.note.active{display:block;animation:rise .55s ease}
+@keyframes rise{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
+.story{font-size:clamp(20px,4vw,32px);line-height:1.55;max-width:720px;margin:25px auto;color:#f4edf7}
+.quote{font-family:"Playfair Display",serif;font-size:clamp(26px,6vw,48px);line-height:1.25}
+#toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,20px);background:#171525ee;border:1px solid #ffffff18;padding:12px 18px;border-radius:999px;opacity:0;transition:.3s;z-index:30}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.final h1{font-size:clamp(55px,14vw,125px)}
+.cake{font-size:100px;animation:bob 2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.pill{display:inline-block;padding:8px 13px;border-radius:99px;background:#ffffff0b;color:#cfc9dd;font-size:12px;margin:4px}
+.footer{margin-top:28px;color:#77738a;font-size:12px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.glass{padding:25px 18px}}
+</style>
+</head>
+<body>
+<div id="app">
+<canvas id="stars"></canvas>
+<div class="progress"><i id="bar"></i></div>
+<div id="toast"></div>
+
+<section class="screen active" id="s0">
+<div class="panel hero">
+<div class="kicker">A classified birthday mission • 2026</div>
+<h1>Mahiiii.</h1>
+<p>There is a tiny universe hidden inside this website. Your mission is simple: <b>open everything</b>. No skipping. 👀</p>
+<button onclick="go(1)">ENTER THE UNIVERSE ✦</button>
+<div class="footer">Best experienced with sound on • made with ridiculous amounts of ✨</div>
+</div>
+</section>
+
+<section class="screen" id="s1">
+<div class="panel glass">
+<div class="kicker">Mission 01 / 05</div>
+<h2 style="font-size:42px">Choose your door.</h2>
+<p style="color:#aaa6bd">Only one is the “correct” answer. But honestly… all of them lead somewhere. 😌</p>
+<div class="grid">
+<div class="choice" onclick="door(0)"><span>🌙</span><small>THE MOON</small></div>
+<div class="choice" onclick="door(1)"><span>🌸</span><small>THE GARDEN</small></div>
+<div class="choice" onclick="door(2)"><span>⚡</span><small>THE STORM</small></div>
+</div>
+<p id="doorText" class="story" style="font-size:18px"></p>
+<button id="doorNext" style="display:none" onclick="go(2)">CONTINUE →</button>
+</div>
+</section>
+
+<section class="screen" id="s2">
+<div class="panel glass">
+<div class="kicker">Mission 02 / 05 • a note</div>
+<h2 style="font-size:42px">For the birthday girl 💌</h2>
+<p class="quote" id="type"></p>
+<button onclick="go(3)">I'M READY FOR THE NEXT ONE →</button>
+</div>
+</section>
+
+<section class="screen" id="s3">
+<div class="panel glass">
+<div class="kicker">Mission 03 / 05 • memory vault</div>
+<h2 style="font-size:42px">Three things you should know</h2>
+<div class="grid">
+<div class="choice" onclick="reveal(0)"><span>🫶</span><small id="r0">TAP TO OPEN</small></div>
+<div class="choice" onclick="reveal(1)"><span>😂</span><small id="r1">TAP TO OPEN</small></div>
+<div class="choice" onclick="reveal(2)"><span>🌷</span><small id="r2">TAP TO OPEN</small></div>
+</div>
+<p style="color:#aaa6bd">Open all three. The final button is hiding from you. 👀</p>
+<button id="vaultNext" style="display:none" onclick="go(4)">UNLOCK THE NEXT CHAPTER →</button>
+</div>
+</section>
+
+<section class="screen" id="s4">
+<div class="panel glass">
+<div class="kicker">Mission 04 / 05 • the wish</div>
+<h2 style="font-size:42px">If I could give you one thing…</h2>
+<p class="story">It wouldn't be money, a gift box, or anything you could put on a shelf.</p>
+<p class="quote">I'd give you a year so good that one day you'll look back and whisper, “I really was happy.”</p>
+<div>
+<span class="pill">more laughter</span><span class="pill">good people</span><span class="pill">peace</span><span class="pill">beautiful surprises</span>
+</div><br><br>
+<button onclick="go(5)">ONE LAST SECRET ✦</button>
+</div>
+</section>
+
+<section class="screen" id="s5">
+<div class="panel glass">
+<div class="kicker">Mission 05 / 05 • final unlock</div>
+<div class="cake">🎂</div>
+<h2 style="font-size:42px">Make a wish, Mahiiii.</h2>
+<p class="story">Close your eyes for three seconds. Think of something you really want.</p>
+<button onclick="finale()">I MADE MY WISH ✨</button>
+</div>
+</section>
+
+<section class="screen final" id="s6">
+<div class="panel">
+<div class="cake">🎂</div>
+<div class="kicker">MISSION COMPLETE</div>
+<h1>HAPPY<br>BIRTHDAY</h1>
+<h2 style="font-size:42px;margin-top:15px">Mahiiii 💗</h2>
+<p class="story">May your next chapter be softer, brighter, funnier and a thousand times more beautiful than the last.</p>
+<p class="quote">“Keep being the person who makes ordinary days feel special.”</p>
+<p>✨ 🎀 🥂 🌸 💗 🎉</p>
+<button onclick="location.reload()">PLAY AGAIN ↻</button>
+</div>
+</section>
+</div>
+
+<script>
+const screens=[...document.querySelectorAll('.screen')];
+let step=0;
+function go(n){
+  screens[step].classList.remove('active'); step=n; screens[step].classList.add('active');
+  document.getElementById('bar').style.width=(step/6*100)+'%';
+  if(n===2) typewriter();
+}
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
+function door(i){
+ const texts=[
+ "The moon says: even from far away, some people still manage to light up the night. 🌙",
+ "The garden says: some people just make everything around them feel a little more alive. 🌸",
+ "The storm says: chaos is fun when the main character is you. ⚡😂"
+ ];
+ document.getElementById('doorText').textContent=texts[i];
+ document.getElementById('doorNext').style.display='inline-block';
+ toast("Door unlocked ✦");
+}
+function typewriter(){
+ const text="Happy Birthday, Mahiiii. I hope you know that you deserve every good thing that finds its way to you. Today is officially yours — so smile, eat cake, and let yourself be celebrated. 💗";
+ const el=document.getElementById('type');el.textContent='';let i=0;
+ (function tick(){if(i<text.length){el.textContent+=text[i++];setTimeout(tick,28)}})();
+}
+let opened=[false,false,false];
+function reveal(i){
+ const vals=[
+ "You are more appreciated than you probably realize. 🫶",
+ "Your existence has definitely improved someone's day more than once. 😂",
+ "I hope life always gives you reasons to keep that smile. 🌷"
+ ];
+ document.getElementById('r'+i).textContent=vals[i];opened[i]=true;
+ if(opened.every(Boolean))document.getElementById('vaultNext').style.display='inline-block';
+}
+function finale(){
+ go(6);
+ confetti();
+}
+function confetti(){
+ for(let i=0;i<130;i++){
+  let e=document.createElement('div');e.textContent=['💗','✨','🌸','🎉','💜','⭐'][Math.floor(Math.random()*6)];
+  e.style.position='fixed';e.style.left=Math.random()*100+'vw';e.style.top='-30px';
+  e.style.fontSize=(12+Math.random()*22)+'px';e.style.zIndex=20;
+  e.style.transition='transform '+(2+Math.random()*3)+'s linear, opacity 4s';
+  document.body.appendChild(e);
+  setTimeout(()=>{e.style.transform=`translateY(${innerHeight+100}px) rotate(${Math.random()*900}deg)`;e.style.opacity=.2},30);
+  setTimeout(()=>e.remove(),5200);
+ }
+}
+// Starfield
+const c=document.getElementById('stars'),ctx=c.getContext('2d');let W,H,stars=[];
+function resize(){W=c.width=innerWidth*devicePixelRatio;H=c.height=innerHeight*devicePixelRatio;stars=Array.from({length:150},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.3,s:Math.random()*.4+.1}))}
+resize();addEventListener('resize',resize);
+function draw(){ctx.clearRect(0,0,W,H);for(const s of stars){s.y+=s.s*devicePixelRatio;if(s.y>H)s.y=0;ctx.globalAlpha=.25+Math.random()*.55;ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(s.x,s.y,s.r*devicePixelRatio,0,Math.PI*2);ctx.fill()}requestAnimationFrame(draw)}draw();
+</script>
+</body>
+</html>
